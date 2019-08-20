@@ -49,10 +49,12 @@ const int rs = 12, en = 11, d4 = 5, d5 = 4, d6 = 3, d7 = 2;
 LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 unsigned long TimerCount;
 unsigned long previousTimerCount;
+unsigned long LCDUpdateTime;
 int sensorPin = 8;
 int Pulse = 0;
 int pinState = LOW;
 int oldpinState = LOW;
+int LCDprintValue = 0;
 
 unsigned long debounceCount = 0;
 void setup() {
@@ -73,15 +75,20 @@ void loop() {
 
             if (pinState == HIGH && pinState != oldpinState){
                 TimerCount = millis();
-                lcd.setCursor(0, 1);
-                lcd.print(((unsigned long)41887.8)/(TimerCount - previousTimerCount));
-                lcd.print("  ");
+                LCDprintValue = (((unsigned long)41887.8)/(TimerCount - previousTimerCount));
+
 
                 
                 previousTimerCount = TimerCount;
       }
 
-      
+
+              if (LCDUpdateTime <= millis()){
+                 lcd.setCursor(0, 1);
+                 lcd.print(LCDprintValue);
+                 lcd.print("  ");
+                 LCDUpdateTime = (millis()+1000);
+              }
       oldpinState = pinState;
       
         
