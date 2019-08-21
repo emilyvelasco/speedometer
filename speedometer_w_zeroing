@@ -1,6 +1,5 @@
 
 /*
-  LiquidCrystal Library
 
 This sketch allows an Arduino to act as a speedometer. 
 Data input can come from magnets glued to the rim or
