@@ -1,6 +1,6 @@
 
 /*
-  LiquidCrystal Library - Hello World
+  LiquidCrystal Library
 
 This sketch allows an Arduino to act as a speedometer. 
 Data input can come from a magnet glued to the rim or
@@ -17,6 +17,8 @@ wheels.
 
 The data is written to an LCD with Hitachi HD44780 compatible chipsets
 using the LiquidCrystal library.
+
+For more information about LiquidCrystal, visit https://www.arduino.cc/en/Reference/LiquidCrystal 
 
 
   The circuit:
