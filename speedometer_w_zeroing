@@ -3,8 +3,8 @@
   LiquidCrystal Library
 
 This sketch allows an Arduino to act as a speedometer. 
-Data input can come from a magnet glued to the rim or
-spoke of a wheel, and a hall-effect sensor.
+Data input can come from magnets glued to the rim or
+spoke of a wheel along with a hall-effect sensor.
 
 (If you use a reed switch instead of a hall-effect sensor,
 you will probably need to modify the sketch to include some debouncing.
