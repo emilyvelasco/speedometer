@@ -76,6 +76,7 @@ int sawPulse = 1;
 
 
 void setup() {
+
   //Gives TimerCount a millisecond value to start with. millis() is the current
   //time in milliseconds since the Arduino booted up
   pinMode(sensorPin, INPUT);
@@ -93,14 +94,14 @@ void setup() {
 
 void loop() {
    
-    pinState = digitalRead(sensorPin); //read the state of pin 8
+    pinState = digitalRead(sensorPin); 
 
-            //checks if pin 8 is high and if that's different than the last time
-            //it checked. if both are true, it means a pulse from the sensor is
-            //being received
+            //Checks to see if the sensor is reading high and if that's
+            //different than the last time it checked. if both are true, it
+            //means a pulse from the sensor is being received
             if (pinState == HIGH && pinState != oldpinState){ 
 
-                //Secords the time in milliseconds so we know when the pulse was
+                //Records the time in milliseconds so we know when the pulse was
                 //received
                 TimerCount = millis();
 
