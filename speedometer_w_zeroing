@@ -1,23 +1,24 @@
 
 /*
 
-This sketch allows an Arduino to act as a speedometer. 
-Data input can come from magnets glued to the rim or
-spoke of a wheel along with a hall-effect sensor.
+This sketch allows an Arduino to act as a speedometer. Data input can come from
+magnets glued to the rim or spoke of a wheel along with a hall-effect sensor or
+reed switch. You can also use an optical sensor using the spokes to break the
+beam of light.
 
-(If you use a reed switch instead of a hall-effect sensor,
-you will probably need to modify the sketch to include some debouncing.
-If you use an optical sensor, you might need Schmitt trigger circuitry.)
+(If you use a reed switch instead of a hall-effect sensor, you will probably
+need to modify the sketch to include some debouncing. If you use an optical
+sensor, you might need Schmitt trigger circuitry.)
 
-The sketch times how long it takes in milliseconds between pulses from
-the sensor, and converts it into feet per minute. It is written for a 
-bandsaw with 16-inch wheels, and six magnets evenly spaced on one of the 
-wheels. 
+The sketch times how long it takes in milliseconds between pulses from the
+sensor, and converts it into feet per minute. It is written for a  bandsaw with
+16-inch wheels, and six magnets evenly spaced on one of the  wheels.
 
-The data is written to an LCD with Hitachi HD44780 compatible chipsets
-using the LiquidCrystal library.
+The data is written to an LCD with Hitachi HD44780 compatible chipsets using the
+LiquidCrystal library.
 
-For more information about LiquidCrystal, visit https://www.arduino.cc/en/Reference/LiquidCrystal 
+For more information about LiquidCrystal, visit
+https://www.arduino.cc/en/Reference/LiquidCrystal
 
 
   The circuit:
@@ -44,23 +45,28 @@ For more information about LiquidCrystal, visit https://www.arduino.cc/en/Refere
  by Tom Igoe
  modified 7 Nov 2016
  by Arturo Guadalupi
- modified from LiquidCrystal Hello World sketch
- by Emily Velasco
+
+ modified 21 Aug 2018 from LiquidCrystal Hello World sketch by Emily Velasco
+
  This example code is in the public domain.
 
 */
 
-// include the library code:
+// Include the library code:
 #include <LiquidCrystal.h>
 
-// initialize the library by associating any needed LCD interface pin
-// with the arduino pin number it is connected to
+// Initialize the library by associating any needed LCD interface pin with the
+// arduino pin number it is connected to
 const int rs = 12, en = 11, d4 = 5, d5 = 4, d6 = 3, d7 = 2;
 LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
-//unsigned long is a type of variable that can be very large without overflowing. this is necessary because the milliseconds add up quickly as the program runs
+
+//Unsigned long is necessary for these variables because they hold millisecond
+//values, which add up quickly as the program runs, and would overflow as int
+//variables
 unsigned long TimerCount; 
 unsigned long previousTimerCount;
 unsigned long LCDUpdateTime;
+
 int sensorPin = 8;
 int Pulse = 0;
 int pinState = LOW;
@@ -70,11 +76,17 @@ int sawPulse = 1;
 
 
 void setup() {
+  //Gives TimerCount a millisecond value to start with. millis() is the current
+  //time in milliseconds since the Arduino booted up
   pinMode(sensorPin, INPUT);
-  //gives TimerCount a millisecond value to start with. millis() is the current time in milliseconds since the Arduino booted up
-  TimerCount = millis(); 
-  previousTimerCount = millis(); //gives previousTimerCount a millisecond value to start with
-  lcd.begin(20, 4);   // set up the LCD's number of columns and rows
+
+  TimerCount = millis();
+  //Gives previousTimerCount a millisecond value to start with 
+  previousTimerCount = millis(); 
+
+  //Set up the LCD's number of columns and rows. Change this to match your LCD
+  //dimensions
+  lcd.begin(20, 4);// 
   lcd.print("Feet per minute:");   
   
 }
@@ -83,38 +95,82 @@ void loop() {
    
     pinState = digitalRead(sensorPin); //read the state of pin 8
 
+            //checks if pin 8 is high and if that's different than the last time
+            //it checked. if both are true, it means a pulse from the sensor is
+            //being received
             if (pinState == HIGH && pinState != oldpinState){ 
-            //checks if pin 8 is high and if that's different than the last time it checked. if both are true, it means a pulse from the sensor is being received
-                TimerCount = millis(); //records the time in milliseconds so we know when the pulse was received
+
+                //Secords the time in milliseconds so we know when the pulse was
+                //received
+                TimerCount = millis();
+
+                //Subtracts the time the last pulse was received from the time
+                //the newest pulse was receieved to determine the milliseconds
+                //between each pulse. Fewer milliseconds between pulses mean the
+                //wheel is turning faster. The constant, 41887.8, is derived
+                //from a series of calculations that turn milliseconds between
+                //pulses into revolutions per minute, and then revolutions per
+                //minute into feet per minute. This constant depends on how many
+                //pulses per rotation the wheel sensor generates, and the
+                //diameter of the wheel.
                 LCDprintValue = (((unsigned long)41887.8)/(TimerCount - previousTimerCount)); 
-                //subtracts the time the last pulse was received from the time the newest pulse was receieved and does some math to turn time the between pulses into a speed value
-                sawPulse = 1; //sets a flag that we can use to tell if the speed has dropped to zero
 
+                //Sets a flag that we can use to tell if the speed has dropped
+                //to zero
+                sawPulse = 1; 
+
+                //Sets previousTimerCount to whatever value was recorded for
+                //TimerCount before math was calculated
                 previousTimerCount = TimerCount; 
-                //sets previousTimerCount to whatever value was recorded for TimerCount before math was calculated
-      }
 
+      }
+              //Checks to see if LCDUpdateTime is less than current time in
+              //milliseconds. this is so the LCD only updates once a second
               if (LCDUpdateTime <= millis()){ 
-              //checks to see if LCDUpdateTime is less than current time in milliseconds. this is so the LCD only updates once a second
-                 lcd.setCursor(0, 1); //places the cursor in the first column on the second row of the LCD
-                 
+
+                //Places the cursor in the first column on the second row of the
+                //LCD
+                 lcd.setCursor(0, 1); 
+
+                 //Checks to see if sawPulse was set to 1 by the first if
+                 //statement. if it has been, it means a pulse was detected
+                 //within the last second and the wheel is still turning
                  if (sawPulse == 1){ 
-                 //checks to see if sawPulse was set to 1 by the first if statement. if it has been, it means a pulse was detected within the last second and the wheel is still turning
-                 lcd.print(LCDprintValue); //prints the speed value calculated above to the LCD
-                 lcd.print("   "); //prints spaces to clear the line now in preparation for the next speed value to be displayed
-                 sawPulse = 0; //resets sawPulse to zero in preparation for the else statement below
+
+                 //Prints the speed value calculated above to the LCD
+                 lcd.print(LCDprintValue); 
+
+                 //Prints spaces to clear the line now in preparation for the
+                 //next speed value to be displayed
+                 lcd.print("   "); 
+
+                 //Resets sawPulse to zero in preparation for the else statement
+                 //below
+                 sawPulse = 0; 
                  }
+
+                 //If sawPulse is anything besides 1, it means the program has
+                 //not detected a new pulse within the last second, and it can
+                 //be assumed speed has dropped to zero
                  else { 
-                 //if sawPulse is anything besides 1, it means the program has not detected a new pulse within the last second, and it can be assumed speed has dropped to zero
-                 lcd.print("0"); //prints zero for the speed
-                 lcd.print("   "); //prints spaces to clear the line now in preparation for the next speed value to be displayed              
+
+                 lcd.print("0"); //Prints zero for the speed
+
+                 //Prints spaces to clear the line now in preparation for the
+                 //next speed value to be displayed
+                 lcd.print("   "); 
                  }
-                 LCDUpdateTime = (millis()+1000); //checks the time, adds 1000 milliseconds (1 second) to it, and records it. this value is compared against the time in milliseconds above to see if a second has elapsed. 
+
+                 //Checks the time, adds 1000 milliseconds (1 second) to it, and
+                 //records it. this value is compared against the time in
+                 //milliseconds above to see if a second has elapsed.
+                 LCDUpdateTime = (millis()+1000); 
 
               }
 
 
-              
+      //Sets oldpinState to the last measured state from the sensor so it can be
+      //used to see if that state has changed next time the loop runs
       oldpinState = pinState;
 
     }
