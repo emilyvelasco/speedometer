@@ -47,8 +47,6 @@ For more information about LiquidCrystal, visit https://www.arduino.cc/en/Refere
 
  This example code is in the public domain.
 
- http://arduino.cc/en/Tutorial/LiquidCrystalHelloWorld
-
 */
 
 // include the library code:
