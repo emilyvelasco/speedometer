@@ -44,7 +44,8 @@ For more information about LiquidCrystal, visit https://www.arduino.cc/en/Refere
  by Tom Igoe
  modified 7 Nov 2016
  by Arturo Guadalupi
-
+ modified from LiquidCrystal Hello World sketch
+ by Emily Velasco
  This example code is in the public domain.
 
 */
@@ -56,7 +57,8 @@ For more information about LiquidCrystal, visit https://www.arduino.cc/en/Refere
 // with the arduino pin number it is connected to
 const int rs = 12, en = 11, d4 = 5, d5 = 4, d6 = 3, d7 = 2;
 LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
-unsigned long TimerCount; //unsigned long is a type of variable that can be very large without overflowing. this is necessary because the milliseconds add up quickly as the program runs
+//unsigned long is a type of variable that can be very large without overflowing. this is necessary because the milliseconds add up quickly as the program runs
+unsigned long TimerCount; 
 unsigned long previousTimerCount;
 unsigned long LCDUpdateTime;
 int sensorPin = 8;
@@ -68,11 +70,12 @@ int sawPulse = 1;
 
 
 void setup() {
-  pinMode(sensorPin, INPUT); //sets pin 8 to input
-  TimerCount = millis(); //gives TimerCount a millisecond value to start with. millis() is the current time in milliseconds since the Arduino booted up
+  pinMode(sensorPin, INPUT);
+  //gives TimerCount a millisecond value to start with. millis() is the current time in milliseconds since the Arduino booted up
+  TimerCount = millis(); 
   previousTimerCount = millis(); //gives previousTimerCount a millisecond value to start with
   lcd.begin(20, 4);   // set up the LCD's number of columns and rows
-  lcd.print("Feet per minute:");   // Print a message to the LCD
+  lcd.print("Feet per minute:");   
   
 }
 
@@ -80,23 +83,29 @@ void loop() {
    
     pinState = digitalRead(sensorPin); //read the state of pin 8
 
-            if (pinState == HIGH && pinState != oldpinState){ //checks if pin 8 is high and if that's different than the last time it checked. if both are true, it means a pulse from the sensor is being received
+            if (pinState == HIGH && pinState != oldpinState){ 
+            //checks if pin 8 is high and if that's different than the last time it checked. if both are true, it means a pulse from the sensor is being received
                 TimerCount = millis(); //records the time in milliseconds so we know when the pulse was received
-                LCDprintValue = (((unsigned long)41887.8)/(TimerCount - previousTimerCount)); //tubtracts the time the last pulse was received from the time the newest pulse was receieved and does some math to turn time the between pulses into a speed value
+                LCDprintValue = (((unsigned long)41887.8)/(TimerCount - previousTimerCount)); 
+                //subtracts the time the last pulse was received from the time the newest pulse was receieved and does some math to turn time the between pulses into a speed value
                 sawPulse = 1; //sets a flag that we can use to tell if the speed has dropped to zero
 
-                previousTimerCount = TimerCount; //sets previousTimerCount to whatever value was recorded for TimerCount before math was calculated
+                previousTimerCount = TimerCount; 
+                //sets previousTimerCount to whatever value was recorded for TimerCount before math was calculated
       }
 
-              if (LCDUpdateTime <= millis()){ //checks to see if LCDUpdateTime is less than current time in milliseconds. this is so the LCD only updates once a second
+              if (LCDUpdateTime <= millis()){ 
+              //checks to see if LCDUpdateTime is less than current time in milliseconds. this is so the LCD only updates once a second
                  lcd.setCursor(0, 1); //places the cursor in the first column on the second row of the LCD
                  
-                 if (sawPulse == 1){ //checks to see if sawPulse was set to 1 by the first if statement. if it has been, it means a pulse was detected within the last second and the wheel is still turning
+                 if (sawPulse == 1){ 
+                 //checks to see if sawPulse was set to 1 by the first if statement. if it has been, it means a pulse was detected within the last second and the wheel is still turning
                  lcd.print(LCDprintValue); //prints the speed value calculated above to the LCD
                  lcd.print("   "); //prints spaces to clear the line now in preparation for the next speed value to be displayed
                  sawPulse = 0; //resets sawPulse to zero in preparation for the else statement below
                  }
-                 else { //if sawPulse is anything besides 1, it means the program has not detected a new pulse within the last second, and it can be assumed speed has dropped to zero
+                 else { 
+                 //if sawPulse is anything besides 1, it means the program has not detected a new pulse within the last second, and it can be assumed speed has dropped to zero
                  lcd.print("0"); //prints zero for the speed
                  lcd.print("   "); //prints spaces to clear the line now in preparation for the next speed value to be displayed              
                  }
