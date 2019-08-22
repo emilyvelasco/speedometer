@@ -146,16 +146,16 @@ void loop() {
     // within the last second and the wheel is still turning
     if (sawPulse == 1){ 
 
-    // Prints the speed value calculated above to the LCD
-    lcd.print(LCDprintValue); 
+      // Prints the speed value calculated above to the LCD
+      lcd.print(LCDprintValue); 
 
-    // Prints spaces to clear the line now in preparation for the
-    // next speed value to be displayed
-    lcd.print("   "); 
+      // Prints spaces to clear the line now in preparation for the
+      // next speed value to be displayed
+      lcd.print("   "); 
 
-    // Resets sawPulse to zero in preparation for the else statement
-    // below
-    sawPulse = 0; 
+      // Resets sawPulse to zero in preparation for the else statement
+      // below
+      sawPulse = 0; 
     }
 
     // If sawPulse is anything besides 1, it means the program has
@@ -163,11 +163,11 @@ void loop() {
     // be assumed speed has dropped to zero
     else { 
 
-    lcd.print("0"); //Prints zero for the speed
+      lcd.print("0"); //Prints zero for the speed
 
-    // Prints spaces to clear the line now in preparation for the
-    // next speed value to be displayed
-    lcd.print("   "); 
+      // Prints spaces to clear the line now in preparation for the
+      // next speed value to be displayed
+      lcd.print("   "); 
     }
 
     // Checks the time, adds 1000 milliseconds (1 second) to it, and
@@ -178,8 +178,8 @@ void loop() {
   }
 
 
-// Sets oldpinState to the last measured state from the sensor so it can be
-// used to see if that state has changed next time the loop runs
-oldpinState = pinState;
+  // Sets oldpinState to the last measured state from the sensor so it can be
+  // used to see if that state has changed next time the loop runs
+  oldpinState = pinState;
 
 }
